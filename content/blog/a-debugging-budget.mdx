@@ -1,0 +1,23 @@
+---
+title: "Give Every Request a Debugging Budget"
+date: "2026-08-09"
+summary: "A request should leave behind enough evidence to be understood without turning your telemetry into an expensive diary."
+tags: ["observability", "backend", "craft"]
+draft: false
+---
+
+When an incident starts, the first question is almost never “do we have logs?” It is “can we connect these particular logs to this particular failure?”
+
+## Preserve the causal thread
+
+For each meaningful request, record an identifier, the actor or tenant when appropriate, the operation, the outcome, and a duration. This is the minimum trail that lets a person reconstruct the story.
+
+```text
+request_id=01H... operation=invoice.create tenant=acme duration_ms=184 outcome=success
+```
+
+Everything else is a cost. Payloads are costly in money, privacy, and attention. Add them only when they materially reduce the time it takes to make the next decision.
+
+## Make the default useful
+
+The best telemetry is not the maximum amount of telemetry. It is the information that is already there at 02:00, before anyone remembers to reproduce the request with extra logging enabled.

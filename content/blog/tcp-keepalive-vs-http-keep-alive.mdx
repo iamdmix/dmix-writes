@@ -1,0 +1,33 @@
+---
+title: "TCP Keepalive vs HTTP Keep-Alive"
+date: "2026-08-26"
+summary: "A quick breakdown of socket-level versus protocol-level connection persistence."
+tags: ["networking", "go", "system-design"]
+draft: false
+---
+
+They share a name, but they live at entirely different layers of the stack. Mixing them up makes production debugging much more confusing than it needs to be.
+
+## HTTP keep-alive is connection reuse
+
+HTTP keep-alive lets multiple requests use the same TCP connection. The expensive handshake is paid once, then a client can issue another request without opening a new socket.
+
+In Go, the default `http.Transport` already pools idle connections. The important part is to close response bodies after reading them, so the transport can return the connection to the pool.
+
+```go
+response, err := client.Do(request)
+if err != nil {
+    return err
+}
+defer response.Body.Close()
+```
+
+## TCP keepalive is failure detection
+
+TCP keepalive is the operating system sending low-level probes on an otherwise idle socket. Its job is to discover a peer that disappeared without a clean close — think a laptop sleeping, a broken NAT mapping, or a dead route.
+
+It does not make HTTP faster. It answers a different question: *is this quiet connection still real?*
+
+## The practical rule
+
+Tune HTTP keep-alive for throughput and connection churn. Tune TCP keepalive (and application-level deadlines) for failure detection. They complement each other, but neither replaces a timeout budget.
