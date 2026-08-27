@@ -1,7 +1,15 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function SiteHeader() {
-  return <header className="shell site-header"><Link className="brand" href="/"><span className="brand-mark">//</span>dmix writes</Link></header>;
+  return (
+    <header className="shell site-header">
+      <Link className="brand" href="/"><span className="brand-mark">//</span>dmix writes</Link>
+      <nav className="nav">
+        <ThemeToggle />
+      </nav>
+    </header>
+  );
 }
 
 export function SiteFooter() {
