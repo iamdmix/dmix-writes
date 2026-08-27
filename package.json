@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "feed": "^5.1.0",
     "gray-matter": "^4.0.3",
     "mermaid": "^11.12.1",
     "next": "^15.5.2",

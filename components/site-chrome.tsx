@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export function SiteHeader() {
-  return <header className="shell site-header"><Link className="brand" href="/"><span className="brand-mark">//</span>dmix writes</Link><nav className="nav"><a href="/rss.xml">rss</a></nav></header>;
+  return <header className="shell site-header"><Link className="brand" href="/"><span className="brand-mark">//</span>dmix writes</Link></header>;
 }
 
 export function SiteFooter() {
