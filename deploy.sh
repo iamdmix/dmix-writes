@@ -18,4 +18,4 @@ docker run -d \
   -p 3002:3000 \
   dmix-writes
 
-echo "==> Deployed successfully to http://localhost:3000"
+echo "==> Deployed successfully to http://localhost:3002"
