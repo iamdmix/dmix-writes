@@ -1,7 +1,8 @@
 :root { --bg-main:#fdfbf7; --bg-surface:#f3efea; --text-main:#241e1a; --text-muted:#746a64; --accent:#c2410c; --border:#e7dfd6; --code-bg:#1c1917; }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scrollbar-gutter: stable; }
-body { margin:0; background:var(--bg-main); color:var(--text-main); font-family:var(--font-geist-sans), Arial, sans-serif; }
+body { margin:0; background:var(--bg-main); color:var(--text-main); font-family:var(--font-geist-sans), Arial, sans-serif; position:relative; }
+body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index:9999; background-image:url('/noise.svg'); background-repeat:repeat; background-size:256px 256px; opacity:0.28; }
 a { color:inherit; text-decoration:none; }
 a:focus-visible { outline:2px solid var(--accent); outline-offset:4px; }
 hr { border:0; height:1px; background:var(--border); opacity:0.35; margin:2.25em 0; }
