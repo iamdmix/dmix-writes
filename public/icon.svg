@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none">
+  <!-- Canvas Base (Parchment #FDFBF7) with Subtle Border (#E7DFD6) -->
+  <rect width="32" height="32" rx="7" fill="#FDFBF7"/>
+  <rect x="0.5" y="0.5" width="31" height="31" rx="6.5" stroke="#E7DFD6" stroke-width="1"/>
+  
+  <!-- Terracotta Slashes #C2410C -->
+  <path d="M9 22L14.5 10H17.5L12 22H9Z" fill="#C2410C"/>
+  <path d="M16 22L21.5 10H24.5L19 22H16Z" fill="#C2410C"/>
+</svg>

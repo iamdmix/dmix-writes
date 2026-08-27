@@ -10,6 +10,11 @@ export function FilterablePostArchive({ posts, tags, initialTags = [], basePath 
   const [selectedTags, setSelectedTags] = useState(initialTags);
   const visiblePosts = useMemo(() => selectedTags.length ? posts.filter((post) => selectedTags.some((tag) => post.tags.includes(tag))) : posts, [posts, selectedTags]);
 
+  const serializedInitialTags = initialTags.join(",");
+  useEffect(() => {
+    setSelectedTags(initialTags);
+  }, [serializedInitialTags]);
+
   useEffect(() => {
     const query = selectedTags.length ? `?topics=${encodeURIComponent(selectedTags.join(","))}` : "";
     window.history.replaceState(null, "", `${basePath}${query}`);
