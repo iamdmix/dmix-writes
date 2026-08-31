@@ -9,9 +9,9 @@ tags: ["docker", "linux", "backend", "beginners"]
 
 "It works on my machine" is easily the biggest lie in software. 
 
-We've all been there. You write some code, it runs beautifully on your laptop, but the second your friend tries to run it, everything is cooked. 
+We've all been there. You write some code, it runs beautifully on your local Debian setup, but the second it hits a vanilla CentOS server in production, everything is cooked — missing dependencies, wrong library versions, or some system path that just doesn't exist.
 
-Why? Because environments are messy. Maybe they have different CPU architectures, maybe their package versions are different, or maybe they're just missing some system paths. 
+Why? Because environments are messy. Different OS versions, different package managers, different CPU architectures. Everyone's machine is a unique snowflake, and that's a problem.
 
 Docker was built to fix this headache once and for all.
 
@@ -55,8 +55,12 @@ Walter never cooked at home. He took the RV and did his thing. If the RV gets bu
 
 People often confuse containers with Virtual Machines. They are not the same. I'll skim over it here but that's a topic for another one, it deserves one.
 
+The original problem with VMs was bloat — running a VM per service meant multi-minute startup times, sizable storage overhead, and resource utilization that rarely made sense. But cramming multiple services into a single VM led to conflicts. Nobody won.
+
 * **Virtual Machines** - These emulate full hardware. Each VM boots a complete, heavy guest operating system. It is like renting a whole separate apartment. Safe, but very expensive on RAM and CPU.
-* **Containers** - These share your computer's OS kernel and just sandbox the process. It is like having your own private bedroom in a shared flat. Super lightweight, boots in milliseconds, and uses almost no extra resources.
+* **Containers** - These share your computer's OS kernel and just sandbox the process. It is like having your own private bedroom in a shared flat. Super lightweight, boots in milliseconds, and uses almost no extra resources. From inside, it feels like your own Linux box — but from the outside, it's just a process.
+
+That kernel-sharing is also why a single production server can run tens of containers across multiple services simultaneously, with far less overhead than the VM era.
 
 ---
 
@@ -76,10 +80,11 @@ CMD ["python", "app.py"]
 ```
 
 ### 2. The Image
-The read-only snapshot.
+The read-only, immutable snapshot of your app and everything it needs. Images are built in layers — if two images share a base (like `python:3.11-slim`), that base is stored once and reused, making storage and distribution surprisingly efficient.
 ```bash
 docker build -t my-app .
 ```
+Once built, this image runs the same way on your laptop, your teammate's machine, or a Fargate task on AWS — as long as there's an OCI-compatible runtime around.
 
 ### 3. The Container
 The actual running app.
@@ -93,7 +98,7 @@ The loop is simple: **Write the Dockerfile** -> **Build the Image** -> **Run the
 
 ## When to use it (and when to skip)
 
-* **Use it when** - You are working in a team, deploying to a cloud server, or setting up database versions locally.
+* **Use it when** - You are working in a team, deploying to a cloud server, setting up local database versions, or going fully serverless (Lambda, Fargate, Cloud Run — they all run your containers under the hood).
 * **Skip it when** - You are just writing a quick 10-line script, learning basic syntax, or hosting a simple static website on Vercel.
 
 ![Drake Loves Docker](/blog/drakelovesdocker.png)
