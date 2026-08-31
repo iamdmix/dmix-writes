@@ -17,7 +17,7 @@ export default async function Home(props: { searchParams: SearchParams }) {
         <section className="hero">
           <div className="hero-main">
             <h1>Thoughts from the edge of the stack.</h1>
-            <p>Tech insights and system notes. Written slowly, based on realexperience, and guaranteed zero AI slop.</p>
+            <p>Tech insights and system notes. Written slowly, based on real experience, and guaranteed zero AI slop.</p>
           </div>
         </section>
         <FilterablePostArchive posts={posts} tags={tags} initialTags={topics} basePath="/" />

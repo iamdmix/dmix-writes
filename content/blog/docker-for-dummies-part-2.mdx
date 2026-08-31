@@ -1,0 +1,108 @@
+---
+title: "Docker for Dummies Part 2"
+date: "2026-08-29"
+summary: "How container DNS networking and persistent data volumes clear the path for multi-container stacks with Docker Compose."
+tags: ["docker", "docker-compose"]
+draft: false
+---
+
+![Diving into Docker](/blog/divingintodocker.jpg)
+
+If you've read the [intro to Docker](/blog/docker-for-dummies), you know what a container is. A single container is clean: your app, its dependencies, isolated and portable.
+
+But no real backend app is a single container.
+
+Your API needs a database. The database needs persistent storage. The frontend needs to talk to the API. Your local dev stack needs hot-reloading. Before you know it you're juggling five separate `docker run` commands with flags you've already forgotten, and you have no idea what order they need to run in.
+
+This is the problem Docker Compose solves. But before getting there, you need to understand what it's actually managing under the hood: **networks** and **volumes**.
+
+---
+
+## Container Networking: How Containers Talk to Each Other
+
+By default, containers are isolated. They can't reach each other by IP address either. Those are dynamic, assigned at runtime, change every time a container restarts. Hardcoding IPs is a terrible idea.
+
+Docker fixes this with **virtual networks**. Containers on the same Docker network can find each other by **name** instead of IP. Docker's internal DNS resolves it automatically.
+
+Three network drivers worth knowing:
+
+- **`bridge` (default):** An isolated virtual network on the host. Containers on the same bridge network can talk to each other; containers on different bridge networks can't. This is what you want for local dev and most single-host setups.
+- **`host`:** Strips out the network namespace entirely. The container shares the host's network stack directly. Useful for performance-critical stuff, but you lose isolation.
+- **`none`:** Cuts off networking completely. For batch jobs or anything that has no business touching a network.
+
+In practice, `bridge` is almost always the answer. You create a named network, attach your containers, and they find each other by service name:
+
+```bash
+docker network create my-app-network
+docker run --network my-app-network --name api my-api-image
+docker run --network my-app-network --name db postgres:16
+```
+
+Now `api` can reach `db` at `postgres://db:5432`. No hardcoded IPs, no config files, no fuss.
+
+The [official Docker networking docs](https://docs.docker.com/network/) go deeper on overlay networks (multi-host Swarm) and Macvlan if you need containers to show up as physical devices on your LAN.
+
+---
+
+## Volumes: Containers Are Temporary, Your Data Isn't
+
+Here's something that surprises a lot of people: **containers throw away everything when they stop.**
+
+As covered in the [production builds post](/blog/docker-production-builds), each container has a thin writable layer on top of read-only image layers. That writable layer lives only as long as the container. Run `docker rm` and it's gone.
+
+For a stateless API, that's fine. For a database, that's catastrophic.
+
+Docker's answer is **volumes**: storage that lives completely outside the container lifecycle.
+
+### Named Volumes
+
+Docker manages these entirely. They live at `/var/lib/docker/volumes/` on the host:
+
+```bash
+docker run -v postgres_data:/var/lib/postgresql/data postgres:16
+```
+
+The volume `postgres_data` outlives every container it's ever mounted into. Kill the container, spin up a new one with the same flag, all the data is right there.
+
+### Bind Mounts
+
+Maps a specific folder on your host directly into the container:
+
+```bash
+docker run -v $(pwd):/app my-node-app
+```
+
+Save a file on your host, the container sees it instantly, dev server hot-reloads. Bind mounts are a local dev thing. Don't use them for production data.
+
+---
+
+## So What Is Docker Compose?
+
+![Docker Compose](/blog/dockercompose.jpeg)
+
+Now that you know about networks and volumes, Compose becomes obvious.
+
+Managing all of this manually is tedious and breaks constantly. Creating networks, defining volumes, passing the right flags to five `docker run` commands in the right order. You'd write a shell script. That script becomes its own maintenance nightmare.
+
+**Docker Compose is a declarative way to describe your entire stack in one file.**
+
+You write a `docker-compose.yml` that says: here are my services, here's how they connect, here's where their data lives. One command, `docker compose up`, and the whole thing boots in the right order with all the wiring done.
+
+It's not [Kubernetes](https://kubernetes.io/docs/home/). It's not for production at scale. It's a local dev and CI tool that wraps the same Docker primitives you'd use manually, just without the ceremony of doing it by hand every time.
+
+The [official Compose docs](https://docs.docker.com/compose/) are genuinely good when you're ready to go deep. CLI reference, spec, all of it is there.
+
+---
+
+## What Compose Actually Handles for You
+
+When you run `docker compose up`:
+
+- **Networking:** creates a shared bridge network automatically. All your services can reach each other by name, no setup needed.
+- **Volumes:** creates named volumes you've defined and mounts them into the right containers.
+- **Startup ordering:** `depends_on` lets you say don't start the API until the database is up. Pair it with a `healthcheck` and it'll wait until Postgres is actually ready to accept connections, not just started.
+- **Environment layering:** a `docker-compose.override.yml` gets merged automatically in local dev. Bind mounts and debug ports stay local without touching the base config your CI uses.
+
+Networks let containers find each other. Volumes let data outlive containers. Compose ties it all together so you're not scripting it from scratch every time.
+
+Curious how any of this actually works at the kernel level? Namespaces, cgroups, OverlayFS. That's all in [Docker Engine Under the Hood](/blog/docker-engine-under-the-hood).

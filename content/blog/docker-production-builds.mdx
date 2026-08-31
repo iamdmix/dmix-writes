@@ -1,0 +1,147 @@
+---
+title: "Docker in Prod Environments"
+date: "2026-08-27"
+summary: "How to shrink 1 GB container images down to 15 MB using multi-stage builds, layer caching, and lightweight base images."
+tags: ["docker", "devops"]
+draft: false
+---
+
+![Containers everywhere](/blog/containerseverywhere.jpeg)
+
+If your Docker image is hitting 1 GB for a Node or Go service, something went wrong.
+
+Getting the app to build and run feels like a win when you're starting out. But shipping that bloated thing to production means slow CI pipelines, stupid storage costs, and a much wider attack surface than you need.
+
+To fix it, you have to let go of one misconception: **containers don't contain a full OS.** If you want to understand exactly why, [VMs vs. Containers](/blog/vms-vs-containers) covers the mechanics. Short version: a container is just a regular Linux process. The image is just the filesystem it wakes up in.
+
+---
+
+## Containers Are Just Processes
+
+A container isn't a VM. It doesn't boot a guest OS or run its own kernel. It's a Linux process on your host machine, wrapped in two kernel features:
+
+- **Namespaces:** Control what the process can see. Its own PID tree, network interfaces, mount points, user IDs.
+- **cgroups:** Control what the process can use. CPU, memory, disk I/O limits.
+
+When you pull an `ubuntu` or `debian` image, you're not running Ubuntu. You're grabbing Ubuntu's user-land tools (`apt`, `bash`, core libs) and running them against your host kernel. That's all an image is.
+
+If your app is a statically compiled Go or Rust binary, you don't even need that. One binary, empty container, done. The [Docker docs on images](https://docs.docker.com/get-started/docker-concepts/building-images/) explain the layer model well if you want to go deeper.
+
+---
+
+## 1. Multi-Stage Builds: Drop the Weight
+
+Why are your compilers and build toolchain in the production image? You need them to *build* the app. They have zero business being in the thing you ship.
+
+Multi-stage builds let you use multiple `FROM` statements in one `Dockerfile`. Build in a heavy stage, then copy only the compiled output into a fresh, minimal runtime image.
+
+Go app, 800 MB down to 15 MB:
+
+```dockerfile
+# Stage 1: Build
+FROM golang:1.22 AS builder
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -o main .
+
+# Stage 2: Runtime
+FROM scratch
+WORKDIR /app
+COPY --from=builder /app/main .
+EXPOSE 8080
+ENTRYPOINT ["./main"]
+```
+
+The final image is one file: your binary. No shell, no package manager, no garbage. The [official multi-stage builds docs](https://docs.docker.com/build/building/multi-stage/) have examples across languages if you need them.
+
+---
+
+## 2. Layer Caching: Order Actually Matters
+
+Docker runs your `Dockerfile` top to bottom. Each instruction (`FROM`, `RUN`, `COPY`) creates an immutable layer. Change a layer, and Docker trashes the cache for that step and everything after it.
+
+The classic mistake:
+
+```dockerfile
+# BAD: blows the dependency cache on every single code change
+FROM node:20
+WORKDIR /app
+COPY . .
+RUN npm install
+CMD ["node", "index.js"]
+```
+
+Change one line of app code and Docker reruns `npm install` from scratch. A 2-second rebuild becomes a 3-minute wait. Lame.
+
+Fix it by copying the dependency manifest first, installing, then copying source:
+
+```dockerfile
+# GOOD: reuses the npm install cache unless package.json actually changes
+FROM node:20
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+CMD ["node", "index.js"]
+```
+
+Now code changes skip the install entirely. The layer is cached.
+
+---
+
+## 3. Base Image Strategy: Scratch vs Alpine vs Slim vs Distroless
+
+Right base image depends on your stack and how much compatibility you need.
+
+- **`scratch`:** Empty. Zero MB. No shell, no package manager, nothing. Perfect for a statically compiled Go or Rust binary. Zero attack surface.
+- **Distroless:** Google's thing. Only your language runtime and the bare minimum system libs. No `apt`, no `bash`. Great for Node or Python in production where you want security without the hassle. Check the [Distroless GitHub repo](https://github.com/GoogleContainerTools/distroless) for what's available.
+- **Alpine:** Tiny Linux base, about 5 MB. Uses `musl libc` instead of `glibc`. Occasionally causes weird compatibility issues with Node native modules or Python C extensions. Know this before committing.
+- **Debian Slim (`debian:bookworm-slim`):** Stripped-down Debian, about 30 MB. Standard `glibc`, so fully compatible with Python, Node, Java, whatever. This is the safe default when you need compatibility but not the full fat image.
+
+| Base Image | Size | C Runtime | Shell / Package Manager | Best For |
+|---|---|---|---|---|
+| **`scratch`** | 0 MB | None | No | Static Go / Rust binaries |
+| **Distroless** | ~20 MB | `glibc` | No | Production Node / Python |
+| **Alpine** | ~5 MB | `musl` | Yes (`apk`, `sh`) | Minimal general services |
+| **Debian Slim** | ~30 MB | `glibc` | Yes (`apt`, `bash`) | Max compatibility |
+
+---
+
+## 4. Volumes and Persistence: Don't Lose Your Data
+
+Containers are ephemeral. Anything written to a container's writable layer vanishes the moment you kill it.
+
+For a stateless API that's fine. For a database that's a disaster.
+
+### Bind Mounts (local dev)
+
+Maps a folder on your host directly into the container:
+
+```bash
+docker run -v $(pwd):/app -p 3000:3000 my-node-app
+```
+
+File changes on your host show up instantly inside the container. This is how hot-reloading works. Bind mounts are for local dev, not production.
+
+### Named Volumes (production)
+
+Docker-managed storage at `/var/lib/docker/volumes/`. Bypasses the copy-on-write overhead and survives container restarts:
+
+```bash
+docker run -v postgres_data:/var/lib/postgresql/data postgres:16
+```
+
+Destroy the container, create a new one with the same volume, data's still there.
+
+---
+
+## The Short List
+
+1. **Order your Dockerfile by change frequency.** Slow stuff first (dependencies), fast stuff last (source code).
+2. **Use multi-stage builds.** Compilers and dev toolchains stay out of the final image.
+3. **Pick the smallest base image that works.** `scratch` for static binaries, Distroless or Debian Slim for everything else.
+4. **Bind mounts for local dev, named volumes for production.** Don't mix them up.
+
+Once your images are lean, [Docker Compose](/blog/docker-compose) is the next thing to look at. It handles running multiple containers together with networking and volumes wired up automatically.
