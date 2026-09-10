@@ -4,7 +4,12 @@ import { ThemeToggle } from "@/components/theme-toggle";
 export function SiteHeader() {
   return (
     <header className="shell site-header">
-      <Link className="brand" href="/"><span className="brand-mark">//</span>dmix writes</Link>
+      <a href="#main-content" className="skip-link">
+        Skip to content
+      </a>
+      <Link className="brand" href="/">
+        <span className="brand-mark">//</span>dmix writes
+      </Link>
       <nav className="nav">
         <ThemeToggle />
       </nav>
@@ -25,6 +30,7 @@ export function SiteFooter() {
           viewBox="0 0 276 276"
           style={{ verticalAlign: "middle", display: "inline-block", opacity: 0.8 }}
           aria-label="No AI Generated Content Logo"
+          role="img"
         >
           <circle cx="138" cy="138" r="124" stroke="#B30000" strokeWidth="28" fill="none" />
           <rect x="80" y="14" width="32" height="242" fill="currentColor" transform="skewX(-9)" />

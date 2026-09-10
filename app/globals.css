@@ -76,6 +76,10 @@ hr { border:0; height:1px; background:var(--border); opacity:0.35; margin:2.25em
 @media (max-width:700px) { .shell { width:min(100% - 40px,1120px); } .site-header { height:62px; } .nav { gap:12px; } .page { padding-top:32px; } .hero { display:block; padding:36px 0 48px; } .hero h1 { font-size:52px; } .human-mark { margin-top:22px; justify-content:flex-start; } .human-mark svg { width:34px; height:34px; } .archive-title { min-height:102px; margin-bottom:32px; } .tags-block { display:block; padding:22px 0; } .tags-block > .metadata { display:none; } .collapsible-tags { max-height:58px; overflow:hidden; transition:max-height .25s ease; } .collapsible-tags.is-expanded { max-height:240px; } .toggle-tags { display:block; margin-top:13px; } .post-row { grid-template-columns:1fr; gap:9px; } .post-row .tag-set { justify-content:flex-start; } .post-date { order:2; } .post-row:hover { padding-left:0; padding-right:0; } .article { width:min(720px, calc(100% - 48px)); padding-top:44px; } .article h1 { font-size:47px; } .prose { font-size:16px; } .article-navigation { flex-direction:column; gap:28px; } .next-link { align-items:flex-start; text-align:left; } .article-loading { width:min(720px, calc(100% - 48px)); padding-top:44px; } }
 @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .post-row,.loading-line { transition:none; animation:none; } }
 
+/* ── Skip Link ──────────────────────────────────────────────── */
+.skip-link { position:absolute; top:-100%; left:16px; background:var(--accent); color:#fffaf5; padding:8px 16px; border-radius:0 0 6px 6px; font:13px var(--font-jetbrains-mono),monospace; z-index:1000; transition:top .2s ease; }
+.skip-link:focus { top:0; }
+
 /* ── Theme Toggle ──────────────────────────────────────────── */
 .theme-toggle-placeholder { width:28px; height:28px; }
 .theme-toggle { appearance:none; border:0; padding:4px; margin:-4px; background:transparent; cursor:pointer; display:grid; place-items:center; color:var(--text-muted); border-radius:6px; transition:color .2s ease, background .2s ease; position:relative; width:28px; height:28px; }

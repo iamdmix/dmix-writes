@@ -44,4 +44,4 @@ npm install
 npm run dev
 ```
 
-Set `NEXT_PUBLIC_SITE_URL` in your deployment environment to your canonical domain. It is used for RSS links and metadata.
+Set `SITE_URL` in your deployment environment to your canonical domain. It is used for RSS links, sitemap, and metadata.

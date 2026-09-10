@@ -9,11 +9,11 @@ export default async function Home(props: { searchParams: SearchParams }) {
   const topics = typeof searchParams.topics === "string" ? searchParams.topics.split(",") : [];
   const posts = getAllPosts();
   const tags = getAllTags();
-  
+
   return (
     <>
       <SiteHeader />
-      <main className="shell page">
+      <main className="shell page" id="main-content">
         <section className="hero">
           <div className="hero-main">
             <h1>Thoughts from the edge of the stack.</h1>
