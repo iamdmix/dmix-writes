@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PostList } from "@/components/post-list";
 import type { BlogPost } from "@/lib/posts";
 
@@ -14,6 +15,8 @@ type Props = {
 type SortOrder = "newest" | "most-liked";
 
 export function FilterablePostArchive({ posts, tags, initialTags = [], basePath = "/blog" }: Props) {
+  const router = useRouter();
+  const skipInitialUrlSync = useRef(true);
   const [selectedTags, setSelectedTags] = useState(initialTags);
   const [tagsExpanded, setTagsExpanded] = useState(initialTags.length > 0);
   const [sortOrder, setSortOrder] = useState<SortOrder>("newest");
@@ -51,9 +54,16 @@ export function FilterablePostArchive({ posts, tags, initialTags = [], basePath 
   }, [serializedInitialTags]);
 
   useEffect(() => {
-    const query = selectedTags.length ? `?topics=${encodeURIComponent(selectedTags.join(","))}` : "";
-    window.history.replaceState(null, "", `${basePath}${query}`);
-  }, [basePath, selectedTags]);
+    if (skipInitialUrlSync.current) {
+      skipInitialUrlSync.current = false;
+      return;
+    }
+    const nextTopics = selectedTags.join(",");
+    const currentTopics = new URLSearchParams(window.location.search).get("topics") ?? "";
+    if (window.location.pathname === basePath && currentTopics === nextTopics) return;
+    const query = nextTopics ? `?topics=${encodeURIComponent(nextTopics)}` : "";
+    router.replace(`${basePath}${query}`, { scroll: false });
+  }, [basePath, router, selectedTags]);
 
   function toggle(tag: string) {
     setSelectedTags((current) => (current.includes(tag) ? current.filter((item) => item !== tag) : [...current, tag]));
