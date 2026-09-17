@@ -107,6 +107,29 @@ hr { border:0; height:1px; background:var(--border); opacity:0.35; margin:2.25em
 .footer-rss { color:var(--text-muted); }
 .footer-rss:hover { color:var(--accent); }
 
+/* ── Topic Hubs ────────────────────────────────────────────── */
+.topic-title { min-height:0; margin:10px 0 22px; }
+.hero-main p a { color:var(--accent); text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:3px; }
+
+/* ── Related Posts ─────────────────────────────────────────── */
+.related-posts { margin-top:62px; padding-top:24px; border-top:1px solid var(--border); }
+.related-posts h2 { margin:0 0 18px; color:var(--text-muted); font-size:11px; font-weight:400; }
+.related-posts ul { list-style:none; margin:0; padding:0; }
+.related-posts li + li { border-top:1px solid var(--border); }
+.related-posts a { display:flex; justify-content:space-between; align-items:baseline; gap:20px; padding:14px 0; }
+.related-posts a:hover { color:var(--accent); }
+.related-posts a span:first-child { font-size:17px; font-weight:600; letter-spacing:-.025em; }
+.related-posts .metadata { color:var(--text-muted); flex-shrink:0; }
+
+/* ── Code Blocks ───────────────────────────────────────────── */
+.code-block { position:relative; }
+.code-block pre { margin:0; }
+.copy-button { position:absolute; top:10px; right:10px; appearance:none; border:1px solid #3a342f; background:color-mix(in srgb, var(--code-bg) 72%, transparent); color:#cfc7bd; padding:5px 10px; border-radius:6px; font:11px var(--font-jetbrains-mono),monospace; letter-spacing:.03em; cursor:pointer; opacity:.6; transition:opacity .2s ease, color .2s ease, border-color .2s ease; }
+.code-block:hover .copy-button,.copy-button:focus-visible { opacity:1; }
+.copy-button:hover { color:#fff; border-color:var(--accent); }
+.copy-button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+@media (hover:none) { .copy-button { opacity:1; } }
+
 /* ── Likes & Sorting ───────────────────────────────────────── */
 .archive-controls { display:flex; align-items:baseline; gap:18px; }
 .sort-toggle { display:flex; align-items:baseline; gap:7px; }

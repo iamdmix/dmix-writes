@@ -10,7 +10,7 @@ import { MdxPre } from "@/components/mdx-pre";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { StructuredData } from "@/components/structured-data";
 import { formatDate, Tag } from "@/components/post-list";
-import { getAllPosts, getPost } from "@/lib/posts";
+import { getAllPosts, getPost, getRelatedPosts } from "@/lib/posts";
 import { siteUrl as baseUrl } from "@/lib/site";
 
 type Props = {
@@ -63,6 +63,7 @@ export default async function PostPage({ params, searchParams }: Props) {
     : getAllPosts();
   const nextPost = readingList[readingList.findIndex((item) => item.slug === post.slug) + 1];
   const topicQuery = selectedTopics.length ? `?topics=${encodeURIComponent(selectedTopics.join(","))}` : "";
+  const relatedPosts = getRelatedPosts(post);
 
   const mdxComponents = {
     pre: MdxPre,
@@ -115,7 +116,7 @@ export default async function PostPage({ params, searchParams }: Props) {
             options={{
               mdxOptions: {
                 remarkPlugins: [remarkGfm],
-                rehypePlugins: [[rehypePrettyCode, { theme: "github-dark", keepBackground: false }]],
+                rehypePlugins: [[rehypePrettyCode, { theme: "github-dark-high-contrast", keepBackground: false }]],
               },
             }}
           />
@@ -134,6 +135,21 @@ export default async function PostPage({ params, searchParams }: Props) {
             </Link>
           )}
         </nav>
+        {relatedPosts.length > 0 && (
+          <section className="related-posts" aria-label="Related reading">
+            <h2 className="metadata">related reading</h2>
+            <ul>
+              {relatedPosts.map((item) => (
+                <li key={item.slug}>
+                  <Link href={`/blog/${item.slug}`}>
+                    <span>{item.title}</span>
+                    <span className="metadata">{formatDate(item.date)}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </main>
       <SiteFooter />
     </>

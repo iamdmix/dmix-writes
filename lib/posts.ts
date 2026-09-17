@@ -47,3 +47,13 @@ export function filterPostsByTags(posts: BlogPost[], tags: string[]): BlogPost[]
   if (!tags.length) return posts;
   return posts.filter((post) => tags.some((tag) => post.tags.includes(tag)));
 }
+
+export function getRelatedPosts(post: BlogPost, limit = 3): BlogPost[] {
+  return getAllPosts()
+    .filter((item) => item.slug !== post.slug)
+    .map((item) => ({ post: item, score: item.tags.filter((tag) => post.tags.includes(tag)).length }))
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score || b.post.date.localeCompare(a.post.date))
+    .slice(0, limit)
+    .map((entry) => entry.post);
+}

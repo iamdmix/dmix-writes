@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { BlogPost } from "@/lib/posts";
 
-export function Tag({ tag }: { tag: string }) { return <Link className="tag" href={`/?topics=${encodeURIComponent(tag)}`}>#{tag}</Link>; }
+export function Tag({ tag }: { tag: string }) { return <Link className="tag" href={`/topics/${encodeURIComponent(tag)}`}>#{tag}</Link>; }
 
 export function PostList({ posts, topics = [], likeCounts = {} }: { posts: BlogPost[]; topics?: string[]; likeCounts?: Record<string, number> }) {
   const topicQuery = topics.length ? `?topics=${encodeURIComponent(topics.join(","))}` : "";

@@ -1,4 +1,5 @@
 import { isValidElement, type ComponentProps, type ReactNode } from "react";
+import { CopyButton } from "@/components/copy-button";
 import { MermaidDiagram } from "@/components/mermaid-diagram";
 
 export function MdxPre({ children, ...props }: ComponentProps<"pre">) {
@@ -8,5 +9,10 @@ export function MdxPre({ children, ...props }: ComponentProps<"pre">) {
   ) {
     return <MermaidDiagram chart={String(children.props.children).trim()} />;
   }
-  return <pre {...props}>{children}</pre>;
+  return (
+    <div className="code-block">
+      <pre {...props}>{children}</pre>
+      <CopyButton />
+    </div>
+  );
 }

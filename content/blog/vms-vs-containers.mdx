@@ -6,7 +6,7 @@ tags: ["docker", "architecture"]
 draft: false
 ---
 
-![VMs vs. Docker](/blog/vmsvsdocker.jpg)
+![Distracted boyfriend meme: "me" looking at "Docker" while "VM" looks on, shocked](/blog/vmsvsdocker.jpg)
 
 Ask anyone to explain the difference between a VM and a container and you'll get the same answer: "containers are lightweight, VMs are heavy."
 
@@ -26,7 +26,7 @@ SSH into a VM and it has no idea it's sharing a CPU with anything else. As far a
 
 The software doing this is the **hypervisor**. It sits between the physical hardware and your VMs, carving out resources and keeping everything separated.
 
-![Types of VMs](/blog/typesofvms.png)
+![Diagram comparing Type 1 bare-metal and Type 2 hosted hypervisor architectures, showing apps, guest OSes, hypervisor and hardware layers](/blog/typesofvms.png)
 
 Two types:
 
@@ -41,7 +41,7 @@ If you want to go deeper on the hypervisor rabbit hole, [VMware's breakdown of T
 
 ## Containers
 
-![Docker Architecture](/blog/dockerarchitecture.png)
+![Container architecture diagram: containers bundling apps with their binaries and libraries above a shared container engine, operating system and hardware](/blog/dockerarchitecture.png)
 
 Containers throw out the hypervisor entirely. No hardware virtualization, no separate guest OS booting up.
 
