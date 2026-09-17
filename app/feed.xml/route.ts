@@ -32,6 +32,8 @@ export function GET() {
     <title>dmix writes</title>
     <link>${baseUrl}</link>
     <description>Engineering notes by dmix — systems, software, and the odd sharp edge.</description>
+    <language>en</language>
+    <lastBuildDate>${posts[0] ? new Date(posts[0].date).toUTCString() : new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${baseUrl}/feed.xml" rel="self" type="application/rss+xml" />
 ${items}
   </channel>

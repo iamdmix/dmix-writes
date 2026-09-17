@@ -102,3 +102,22 @@ hr { border:0; height:1px; background:var(--border); opacity:0.35; margin:2.25em
 .prose tbody tr:hover { background:var(--bg-surface); }
 .prose td { padding:10px 14px; color:var(--text-main); opacity:.88; vertical-align:top; }
 .prose td strong { font-weight:600; opacity:1; }
+
+/* ── RSS Links ─────────────────────────────────────────────── */
+.footer-rss { color:var(--text-muted); }
+.footer-rss:hover { color:var(--accent); }
+
+/* ── Likes & Sorting ───────────────────────────────────────── */
+.archive-controls { display:flex; align-items:baseline; gap:18px; }
+.sort-toggle { display:flex; align-items:baseline; gap:7px; }
+.sort-toggle button { appearance:none; border:0; padding:0; background:transparent; color:var(--text-muted); font:inherit; cursor:pointer; transition:color .2s ease; }
+.sort-toggle button:hover,.sort-toggle button.is-active { color:var(--accent); }
+.post-date { display:flex; flex-direction:column; gap:6px; }
+.post-likes { color:var(--accent); }
+.like-row { display:flex; justify-content:center; margin-top:56px; }
+.like-button { appearance:none; display:inline-flex; align-items:center; gap:9px; padding:10px 18px; background:transparent; border:1px solid var(--border); border-radius:99px; color:var(--text-muted); font:12px var(--font-jetbrains-mono),monospace; cursor:pointer; transition:border-color .2s ease, color .2s ease, background-color .2s ease; }
+.like-button:hover:not(:disabled) { border-color:var(--accent); color:var(--accent); }
+.like-button.is-liked { border-color:var(--accent); color:var(--accent); background:color-mix(in srgb, var(--accent) 8%, transparent); cursor:default; }
+.like-button svg { width:15px; height:15px; }
+.like-button.is-liked svg { fill:currentColor; }
+.like-button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }

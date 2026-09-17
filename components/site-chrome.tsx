@@ -11,6 +11,9 @@ export function SiteHeader() {
         <span className="brand-mark">//</span>dmix writes
       </Link>
       <nav className="nav">
+        <a href="/feed.xml" className="nav-rss" title="Subscribe via RSS">
+          rss
+        </a>
         <ThemeToggle />
       </nav>
     </header>
@@ -20,7 +23,7 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="shell site-footer">
-      <span>© {new Date().getFullYear()} dmix</span>
+      <span>© {new Date().getFullYear()} dmix · <a href="/feed.xml" className="footer-rss">rss</a></span>
       <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
         made for careful reading
         <svg
