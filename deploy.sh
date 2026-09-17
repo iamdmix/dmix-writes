@@ -30,9 +30,9 @@ docker rm dmix-writes 2>/dev/null || true
 docker run -d \
   --name dmix-writes \
   --restart unless-stopped \
-  -p 3003:3000 \
+  -p 3002:3000 \
   -e SITE_URL="$SITE_URL" \
   -v dmix-likes:/app/data \
   dmix-writes
 
-echo "==> Deployed successfully to http://localhost:3003"
+echo "==> Deployed successfully to http://localhost:3002"
