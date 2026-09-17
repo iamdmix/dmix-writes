@@ -21,11 +21,7 @@ if [ -z "${SITE_URL:-}" ]; then
 fi
 
 echo "==> Building Docker image..."
-docker build \
-  --build-arg SITE_URL="$SITE_URL" \
-  --build-arg NEXT_PUBLIC_UMAMI_SCRIPT_URL="${NEXT_PUBLIC_UMAMI_SCRIPT_URL:-}" \
-  --build-arg NEXT_PUBLIC_UMAMI_WEBSITE_ID="${NEXT_PUBLIC_UMAMI_WEBSITE_ID:-}" \
-  -t dmix-writes .
+docker build --build-arg SITE_URL="$SITE_URL" -t dmix-writes .
 
 echo "==> Restarting container..."
 docker stop dmix-writes 2>/dev/null || true
