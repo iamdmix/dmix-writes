@@ -11,14 +11,38 @@ type Props = {
   basePath?: string;
 };
 
+type SortOrder = "newest" | "most-liked";
+
 export function FilterablePostArchive({ posts, tags, initialTags = [], basePath = "/blog" }: Props) {
   const [selectedTags, setSelectedTags] = useState(initialTags);
   const [tagsExpanded, setTagsExpanded] = useState(initialTags.length > 0);
+  const [sortOrder, setSortOrder] = useState<SortOrder>("newest");
+  const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
 
-  const visiblePosts = useMemo(
-    () => (selectedTags.length ? posts.filter((post) => selectedTags.some((tag) => post.tags.includes(tag))) : posts),
-    [posts, selectedTags],
-  );
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/likes")
+      .then((response) => (response.ok ? response.json() : {}))
+      .then((counts: Record<string, number>) => {
+        if (!cancelled && counts && typeof counts === "object") setLikeCounts(counts);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const visiblePosts = useMemo(() => {
+    const filtered = selectedTags.length
+      ? posts.filter((post) => selectedTags.some((tag) => post.tags.includes(tag)))
+      : posts;
+    if (sortOrder === "most-liked") {
+      return [...filtered].sort(
+        (a, b) => (likeCounts[b.slug] ?? 0) - (likeCounts[a.slug] ?? 0) || b.date.localeCompare(a.date),
+      );
+    }
+    return filtered;
+  }, [posts, selectedTags, sortOrder, likeCounts]);
 
   const serializedInitialTags = initialTags.join(",");
   useEffect(() => {
@@ -68,16 +92,35 @@ export function FilterablePostArchive({ posts, tags, initialTags = [], basePath 
               ? `${visiblePosts.length} matching note${visiblePosts.length === 1 ? "" : "s"}`
               : "Writing"}
           </h2>
-          {selectedTags.length ? (
-            <button className="clear-topics metadata" type="button" onClick={() => setSelectedTags([])}>
-              clear topics
-            </button>
-          ) : (
-            <span className="archive-count metadata">newest first</span>
-          )}
+          <div className="archive-controls">
+            <div className="sort-toggle metadata" role="group" aria-label="Sort posts">
+              <button
+                className={sortOrder === "newest" ? "is-active" : ""}
+                type="button"
+                aria-pressed={sortOrder === "newest"}
+                onClick={() => setSortOrder("newest")}
+              >
+                newest
+              </button>
+              <span aria-hidden="true">/</span>
+              <button
+                className={sortOrder === "most-liked" ? "is-active" : ""}
+                type="button"
+                aria-pressed={sortOrder === "most-liked"}
+                onClick={() => setSortOrder("most-liked")}
+              >
+                most liked
+              </button>
+            </div>
+            {selectedTags.length > 0 && (
+              <button className="clear-topics metadata" type="button" onClick={() => setSelectedTags([])}>
+                clear topics
+              </button>
+            )}
+          </div>
         </div>
         {visiblePosts.length ? (
-          <PostList posts={visiblePosts} topics={selectedTags} />
+          <PostList posts={visiblePosts} topics={selectedTags} likeCounts={likeCounts} />
         ) : (
           <p className="empty-notes">No notes match that combination yet.</p>
         )}
