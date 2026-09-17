@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains-mono" });
 
-const siteUrl = process.env.SITE_URL ?? "http://localhost:3000";
 const siteDescription = "Engineering notes by dmix — systems, software, and the odd sharp edge.";
 
 export const metadata: Metadata = {

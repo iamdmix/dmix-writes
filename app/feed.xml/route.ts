@@ -1,6 +1,5 @@
 import { getAllPosts } from "@/lib/posts";
-
-const baseUrl = process.env.SITE_URL ?? "http://localhost:3000";
+import { siteUrl as baseUrl } from "@/lib/site";
 
 function escapeXml(str: string): string {
   return str

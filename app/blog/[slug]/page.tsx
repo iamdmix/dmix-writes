@@ -11,13 +11,12 @@ import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { StructuredData } from "@/components/structured-data";
 import { formatDate, Tag } from "@/components/post-list";
 import { getAllPosts, getPost } from "@/lib/posts";
+import { siteUrl as baseUrl } from "@/lib/site";
 
 type Props = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ topics?: string }>;
 };
-
-const baseUrl = process.env.SITE_URL ?? "http://localhost:3000";
 
 export function generateStaticParams() {
   return getAllPosts().map(({ slug }) => ({ slug }));

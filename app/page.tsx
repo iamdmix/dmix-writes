@@ -2,11 +2,11 @@ import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { FilterablePostArchive } from "@/components/filterable-post-archive";
 import { StructuredData } from "@/components/structured-data";
 import { getAllPosts, getAllTags } from "@/lib/posts";
+import { siteUrl as baseUrl } from "@/lib/site";
 
 type SearchParams = Promise<{ topics?: string }>;
 
 const siteDescription = "Tech insights and system notes. Written slowly, based on real experience, and guaranteed zero AI slop.";
-const baseUrl = process.env.SITE_URL ?? "http://localhost:3000";
 
 export default async function Home(props: { searchParams: SearchParams }) {
   const searchParams = await props.searchParams;
