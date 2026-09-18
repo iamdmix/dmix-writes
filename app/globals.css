@@ -58,7 +58,7 @@ hr { border:0; height:1px; background:var(--border); opacity:0.35; margin:2.25em
 .prose pre { overflow:auto; padding:22px; background:var(--code-bg); color:#f5f1ea; border-radius:8px; border:1px solid #302b27; font-size:13px; line-height:1.7; }
 .prose pre code { padding:0; background:transparent; }
 /* ── Zero-CLS Media Frames ────────────────────────────────── */
-.media-frame { position:relative; margin:2.25em auto; border:1px solid var(--border); border-radius:8px; background-color:var(--bg-surface); background-repeat:no-repeat; background-position:center; background-size:contain; overflow:hidden; max-width:100%; }
+.media-frame { display:block; position:relative; margin:2.25em auto; border:1px solid var(--border); border-radius:8px; background-color:var(--bg-surface); background-repeat:no-repeat; background-position:center; background-size:contain; overflow:hidden; max-width:100%; }
 .media-frame img { display:block; width:100%; height:100%; object-fit:contain; font:11px var(--font-jetbrains-mono),monospace; color:var(--text-muted); }
 .prose img { display:block; }
 .mermaid { overflow-x:auto; margin:2.25em 0; padding:24px; background:var(--bg-surface); border:1px solid var(--border); border-radius:8px; }

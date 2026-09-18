@@ -19,7 +19,7 @@ export function ProseImage(props: ProseImageProps) {
   const reservedWidth = Math.round(MAX_DISPLAY_HEIGHT * ratio);
 
   return (
-    <figure
+    <span
       className="media-frame"
       style={{
         aspectRatio: `${dims.width} / ${dims.height}`,
@@ -36,6 +36,6 @@ export function ProseImage(props: ProseImageProps) {
         fetchPriority={priority ? "high" : undefined}
         decoding={priority ? "sync" : "async"}
       />
-    </figure>
+    </span>
   );
 }
