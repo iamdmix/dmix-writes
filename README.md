@@ -10,6 +10,7 @@ Create `content/blog/your-slug.mdx` with the required frontmatter:
 ---
 title: "Your title"
 date: "2026-08-26"
+updated: "2026-09-01"
 summary: "One concise description."
 tags: ["topic", "another-topic"]
 draft: false
@@ -18,7 +19,8 @@ draft: false
 Write in Markdown or MDX here.
 ```
 
-`draft: true` excludes a post from the site, RSS feed, tags, and static routes.
+`draft: true` excludes a post from the site, RSS feed, tags, and static routes. `updated` is
+optional and drives `<lastmod>` in the sitemap, `dateModified` in JSON-LD, and RSS `lastBuildDate`.
 
 ## Images and diagrams
 
@@ -44,4 +46,6 @@ npm install
 npm run dev
 ```
 
-Set `SITE_URL` in your deployment environment to your canonical domain. It is used for RSS links, sitemap, and metadata.
+Set `SITE_URL` in your deployment environment to your canonical domain (defaults to
+`https://blog.dharmikshinde.tech`). It is used for canonical tags, RSS links, sitemap, metadata,
+and `/llms.txt`.

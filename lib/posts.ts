@@ -7,12 +7,18 @@ const contentDirectory = path.join(process.cwd(), "content/blog");
 const frontmatterSchema = z.object({
   title: z.string().min(1),
   date: z.string().date(),
+  updated: z.string().date().optional(),
   summary: z.string().min(1),
   tags: z.array(z.string().min(1)).min(1),
   draft: z.boolean().default(false),
 });
 
 export type BlogPost = z.infer<typeof frontmatterSchema> & { slug: string };
+export type PostLastMod = { date: string; updated?: string };
+
+export function postLastModifiedDate(post: PostLastMod): string {
+  return post.updated ?? post.date;
+}
 export type BlogPostWithContent = BlogPost & { content: string };
 
 function fileNames(): string[] {

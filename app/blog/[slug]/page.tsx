@@ -9,14 +9,21 @@ import { LikeButton } from "@/components/like-button";
 import { MdxPre } from "@/components/mdx-pre";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { StructuredData } from "@/components/structured-data";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { formatDate, Tag } from "@/components/post-list";
 import { getAllPosts, getPost, getRelatedPosts } from "@/lib/posts";
-import { siteUrl as baseUrl } from "@/lib/site";
+import { imageDimensions } from "@/lib/images";
+import { breadcrumbJsonLd, postJsonLd } from "@/lib/seo";
+import { siteName } from "@/lib/seo";
 
 type Props = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ topics?: string }>;
 };
+
+const WORDS_PER_MINUTE = 220;
+
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return getAllPosts().map(({ slug }) => ({ slug }));
@@ -40,14 +47,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: post.summary,
       url: path,
       publishedTime: post.date,
+      modifiedTime: post.updated ?? undefined,
       tags: post.tags,
-      images: [`${path}/opengraph-image`],
+      images: [{ url: `${path}/opengraph-image`, alt: post.title, width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.summary,
-      images: [`${path}/opengraph-image`],
+      images: [{ url: `${path}/opengraph-image`, alt: post.title }],
     },
   };
 }
@@ -64,10 +72,23 @@ export default async function PostPage({ params, searchParams }: Props) {
   const nextPost = readingList[readingList.findIndex((item) => item.slug === post.slug) + 1];
   const topicQuery = selectedTopics.length ? `?topics=${encodeURIComponent(selectedTopics.join(","))}` : "";
   const relatedPosts = getRelatedPosts(post);
+  const words = post.content.trim().split(/\s+/).length;
 
   const mdxComponents = {
     pre: MdxPre,
-    img: (props: ImgHTMLAttributes<HTMLImageElement>) => <img {...props} loading="lazy" decoding="async" />,
+    img: (props: ImgHTMLAttributes<HTMLImageElement>) => {
+      const dimensions = imageDimensions(props.src);
+      return (
+        <img
+          {...props}
+          alt={props.alt ?? ""}
+          width={props.width ?? dimensions?.width}
+          height={props.height ?? dimensions?.height}
+          loading={props.loading ?? "lazy"}
+          decoding="async"
+        />
+      );
+    },
     table: (props: HTMLAttributes<HTMLTableElement>) => <table {...props} />,
     thead: (props: HTMLAttributes<HTMLTableSectionElement>) => <thead {...props} />,
     tbody: (props: HTMLAttributes<HTMLTableSectionElement>) => <tbody {...props} />,
@@ -76,27 +97,33 @@ export default async function PostPage({ params, searchParams }: Props) {
     td: (props: TdHTMLAttributes<HTMLTableCellElement>) => <td {...props} />,
   };
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: post.title,
-    description: post.summary,
-    datePublished: post.date,
-    dateModified: post.date,
-    inLanguage: "en",
-    author: { "@type": "Person", name: "dmix", url: baseUrl },
-    publisher: { "@type": "Person", name: "dmix", url: baseUrl },
-    mainEntityOfPage: { "@type": "WebPage", "@id": `${baseUrl}/blog/${post.slug}` },
-    url: `${baseUrl}/blog/${post.slug}`,
-    image: `${baseUrl}/blog/${post.slug}/opengraph-image`,
-    keywords: post.tags.join(", "),
-  };
+  const structuredData = [
+    postJsonLd({
+      slug: post.slug,
+      title: post.title,
+      summary: post.summary,
+      date: post.date,
+      updated: post.updated,
+      tags: post.tags,
+      wordCount: words,
+    }),
+    breadcrumbJsonLd([
+      { name: siteName, path: "/" },
+      { name: post.title, path: `/blog/${post.slug}` },
+    ]),
+  ];
 
   return (
     <>
-      <StructuredData data={jsonLd} />
+      <StructuredData data={structuredData} />
       <SiteHeader />
       <main className="article" id="main-content">
+        <Breadcrumbs
+          items={[
+            { name: siteName, path: "/" },
+            { name: post.title, path: `/blog/${post.slug}` },
+          ]}
+        />
         <header className="article-head">
           <div className="tag-set" style={{ justifyContent: "flex-start" }}>
             {post.tags.map((tag) => (
@@ -126,7 +153,7 @@ export default async function PostPage({ params, searchParams }: Props) {
         </div>
         <nav className="article-navigation" aria-label="Article navigation">
           <Link className="back-link" href={`/${topicQuery}`}>
-            ← back
+            ← all writing
           </Link>
           {nextPost && (
             <Link className="next-link" href={`/blog/${nextPost.slug}${topicQuery}`}>
@@ -155,8 +182,6 @@ export default async function PostPage({ params, searchParams }: Props) {
     </>
   );
 }
-
-const WORDS_PER_MINUTE = 220;
 
 function readingTime(content: string): number {
   return Math.max(1, Math.ceil(content.trim().split(/\s+/).length / WORDS_PER_MINUTE));

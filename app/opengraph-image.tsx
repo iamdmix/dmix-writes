@@ -19,7 +19,7 @@ export default function Image() {
         borderTop: "16px solid #c2410c",
       }}
     >
-      <div style={{ display: "flex", fontSize: 27, color: "#c2410c" }}>// dmix writes</div>
+      <div style={{ display: "flex", fontSize: 27, color: "#c2410c" }}>{"// dmix writes"}</div>
       <div style={{ display: "flex", fontSize: 76, letterSpacing: "-4px", lineHeight: 1.05, maxWidth: "1000px" }}>
         Thoughts from the edge of the stack.
       </div>

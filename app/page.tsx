@@ -1,12 +1,29 @@
+import type { Metadata } from "next";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { FilterablePostArchive } from "@/components/filterable-post-archive";
 import { StructuredData } from "@/components/structured-data";
 import { getAllPosts, getAllTags } from "@/lib/posts";
-import { siteUrl as baseUrl } from "@/lib/site";
+import { blogJsonLd, profilePageJsonLd, siteDescription, siteName, personJsonLd, webSiteJsonLd } from "@/lib/seo";
+import { absoluteUrl } from "@/lib/site";
 
 type SearchParams = Promise<{ topics?: string }>;
 
-const siteDescription = "Tech insights and system notes. Written slowly, based on real experience, and guaranteed zero AI slop.";
+export const metadata: Metadata = {
+  title: { absolute: "dmix writes — engineering notes on systems and software" },
+  description: siteDescription,
+  alternates: { canonical: "/", types: { "application/rss+xml": "/feed.xml" } },
+  openGraph: {
+    type: "website",
+    title: siteName,
+    description: siteDescription,
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteName,
+    description: siteDescription,
+  },
+};
 
 export default async function Home(props: { searchParams: SearchParams }) {
   const searchParams = await props.searchParams;
@@ -16,12 +33,12 @@ export default async function Home(props: { searchParams: SearchParams }) {
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "dmix writes",
-    url: baseUrl,
-    description: siteDescription,
-    inLanguage: "en",
-    author: { "@type": "Person", name: "dmix", url: baseUrl },
+    "@graph": [
+      personJsonLd(),
+      webSiteJsonLd(),
+      blogJsonLd(posts.map((post) => absoluteUrl(`/blog/${post.slug}`))),
+      profilePageJsonLd(),
+    ],
   };
 
   return (

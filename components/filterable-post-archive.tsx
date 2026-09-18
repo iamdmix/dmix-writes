@@ -49,8 +49,8 @@ export function FilterablePostArchive({ posts, tags, initialTags = [], basePath 
 
   const serializedInitialTags = initialTags.join(",");
   useEffect(() => {
-    setSelectedTags(initialTags);
-    setTagsExpanded(initialTags.length > 0);
+    setSelectedTags(serializedInitialTags ? serializedInitialTags.split(",") : []);
+    setTagsExpanded(serializedInitialTags.length > 0);
   }, [serializedInitialTags]);
 
   useEffect(() => {

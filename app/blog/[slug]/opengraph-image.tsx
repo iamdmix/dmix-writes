@@ -23,7 +23,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           borderTop: "16px solid #c2410c",
         }}
       >
-        <div style={{ display: "flex", fontSize: 27, color: "#c2410c" }}>// dmix writes</div>
+        <div style={{ display: "flex", fontSize: 27, color: "#c2410c" }}>{"// dmix writes"}</div>
         <div style={{ display: "flex", fontSize: 72, letterSpacing: "-4px", lineHeight: 1.05 }}>
           dmix writes
         </div>
@@ -49,7 +49,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
         borderTop: "16px solid #c2410c",
       }}
     >
-      <div style={{ display: "flex", fontSize: 27, color: "#c2410c" }}>// dmix writes</div>
+      <div style={{ display: "flex", fontSize: 27, color: "#c2410c" }}>{"// dmix writes"}</div>
       <div style={{ display: "flex", fontSize: 72, letterSpacing: "-4px", lineHeight: 1.05, maxWidth: "1000px" }}>
         {post.title}
       </div>

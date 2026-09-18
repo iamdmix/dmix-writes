@@ -8,7 +8,7 @@ export function SiteHeader() {
         Skip to content
       </a>
       <Link className="brand" href="/">
-        <span className="brand-mark">//</span>dmix writes
+        <span className="brand-mark">{"//"}</span>dmix writes
       </Link>
       <nav className="nav">
         <a href="/feed.xml" className="nav-rss" title="Subscribe via RSS">

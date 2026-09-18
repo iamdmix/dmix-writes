@@ -1,11 +1,17 @@
 import type { MetadataRoute } from "next";
-import { getAllPosts, getAllTags } from "@/lib/posts";
+import { getAllPosts, getAllTags, postLastModifiedDate } from "@/lib/posts";
 import { siteUrl as baseUrl } from "@/lib/site";
+
+function toDate(dateString: string): Date {
+  return new Date(`${dateString}T00:00:00Z`);
+}
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const posts = getAllPosts();
-  const latestPost = posts[0];
-  const latestDate = latestPost ? new Date(`${latestPost.date}T00:00:00Z`) : new Date();
+  const latestModification = posts
+    .map((post) => postLastModifiedDate(post))
+    .sort((a, b) => b.localeCompare(a))[0];
+  const latestDate = latestModification ? toDate(latestModification) : new Date();
 
   return [
     {
@@ -16,7 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     ...posts.map((post) => ({
       url: `${baseUrl}/blog/${post.slug}`,
-      lastModified: new Date(`${post.date}T00:00:00Z`),
+      lastModified: toDate(postLastModifiedDate(post)),
       changeFrequency: "monthly" as const,
       priority: 0.8,
     })),
