@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { FilterablePostArchive } from "@/components/filterable-post-archive";
 import { StructuredData } from "@/components/structured-data";
+import { AuthorCard } from "@/components/author-card";
 import { getAllPosts, getAllTags } from "@/lib/posts";
 import { blogJsonLd, profilePageJsonLd, siteDescription, siteName, personJsonLd, webSiteJsonLd } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
@@ -50,6 +51,9 @@ export default async function Home(props: { searchParams: SearchParams }) {
           <div className="hero-main">
             <h1>Thoughts from the edge of the stack.</h1>
             <p>{siteDescription}</p>
+          </div>
+          <div className="hero-aside">
+            <AuthorCard />
           </div>
         </section>
         <FilterablePostArchive posts={posts} tags={tags} initialTags={topics} basePath="/" />

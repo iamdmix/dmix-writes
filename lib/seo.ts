@@ -10,7 +10,7 @@ export const author = {
   name: "Dharmik Shinde",
   alternateName: "dmix",
   url: siteUrl,
-  sameAs: ["https://github.com/iamdmix"],
+  sameAs: ["https://dharmikshinde.tech", "https://github.com/iamdmix"],
 };
 
 function personRef() {
@@ -19,6 +19,7 @@ function personRef() {
     "@id": `${siteUrl}/#person`,
     name: author.name,
     url: siteUrl,
+    sameAs: author.sameAs,
   };
 }
 
