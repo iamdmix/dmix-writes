@@ -19,6 +19,10 @@ export type PostLastMod = { date: string; updated?: string };
 export function postLastModifiedDate(post: PostLastMod): string {
   return post.updated ?? post.date;
 }
+
+export function postDateIso(dateString: string): string {
+  return new Date(`${dateString}T00:00:00Z`).toISOString();
+}
 export type BlogPostWithContent = BlogPost & { content: string };
 
 function fileNames(): string[] {

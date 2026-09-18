@@ -1,3 +1,4 @@
+import { postDateIso } from "@/lib/posts";
 import { siteUrl } from "@/lib/site";
 
 export const siteName = "dmix writes";
@@ -6,10 +7,20 @@ export const siteDescription =
 export const siteLanguage = "en";
 
 export const author = {
-  name: "dmix",
+  name: "Dharmik Shinde",
+  alternateName: "dmix",
   url: siteUrl,
   sameAs: ["https://github.com/iamdmix"],
 };
+
+function personRef() {
+  return {
+    "@type": "Person",
+    "@id": `${siteUrl}/#person`,
+    name: author.name,
+    url: siteUrl,
+  };
+}
 
 export function personJsonLd() {
   return {
@@ -17,6 +28,7 @@ export function personJsonLd() {
     "@type": "Person",
     "@id": `${siteUrl}/#person`,
     name: author.name,
+    alternateName: author.alternateName,
     url: siteUrl,
     sameAs: author.sameAs,
     description: "Engineer writing about systems, containers, and macOS setups.",
@@ -113,11 +125,11 @@ export function postJsonLd(post: {
     url,
     headline: post.title,
     description: post.summary,
-    datePublished: post.date,
-    dateModified: post.updated ?? post.date,
+    datePublished: postDateIso(post.date),
+    dateModified: postDateIso(post.updated ?? post.date),
     inLanguage: siteLanguage,
-    author: { "@id": `${siteUrl}/#person` },
-    publisher: { "@id": `${siteUrl}/#person` },
+    author: personRef(),
+    publisher: personRef(),
     isPartOf: { "@id": `${siteUrl}/#blog` },
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     image: `${url}/opengraph-image`,
