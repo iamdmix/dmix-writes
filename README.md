@@ -30,6 +30,16 @@ Place local images in `public/blog/`, then use standard Markdown in a post:
 ![Clear description](/blog/your-image.png)
 ```
 
+Every post image renders inside a zero-CLS `media-frame` that reserves its exact layout box
+via `aspect-ratio` before the image downloads, with a low-quality placeholder shown while
+loading. The first image in a post is treated as the hero (loaded eagerly with high priority);
+all others load lazily.
+
+When adding an image:
+
+1. Add its intrinsic dimensions to the map in `lib/images.ts` (`sips -g pixelWidth -g pixelHeight public/blog/your-image.png`).
+2. Generate its placeholder with `./scripts/generate-lqip.sh` (needs 48px-wide JPEG output in `public/lqip/`).
+
 Mermaid diagrams render on the reader's device. Add a `mermaid` code block:
 
 ````md

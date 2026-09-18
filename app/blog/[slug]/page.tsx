@@ -7,12 +7,12 @@ import rehypePrettyCode from "rehype-pretty-code";
 import remarkGfm from "remark-gfm";
 import { LikeButton } from "@/components/like-button";
 import { MdxPre } from "@/components/mdx-pre";
+import { ProseImage } from "@/components/prose-image";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { StructuredData } from "@/components/structured-data";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { formatDate, Tag } from "@/components/post-list";
 import { getAllPosts, getPost, getRelatedPosts } from "@/lib/posts";
-import { imageDimensions } from "@/lib/images";
 import { breadcrumbJsonLd, postJsonLd } from "@/lib/seo";
 import { siteName } from "@/lib/seo";
 
@@ -73,22 +73,13 @@ export default async function PostPage({ params, searchParams }: Props) {
   const topicQuery = selectedTopics.length ? `?topics=${encodeURIComponent(selectedTopics.join(","))}` : "";
   const relatedPosts = getRelatedPosts(post);
   const words = post.content.trim().split(/\s+/).length;
+  const heroImageSrc = post.content.match(/!\[[^\]]*\]\((\/blog\/[^)\s]+)\)/)?.[1];
 
   const mdxComponents = {
     pre: MdxPre,
-    img: (props: ImgHTMLAttributes<HTMLImageElement>) => {
-      const dimensions = imageDimensions(props.src);
-      return (
-        <img
-          {...props}
-          alt={props.alt ?? ""}
-          width={props.width ?? dimensions?.width}
-          height={props.height ?? dimensions?.height}
-          loading={props.loading ?? "lazy"}
-          decoding="async"
-        />
-      );
-    },
+    img: (props: ImgHTMLAttributes<HTMLImageElement>) => (
+      <ProseImage {...props} priority={props.src === heroImageSrc} />
+    ),
     table: (props: HTMLAttributes<HTMLTableElement>) => <table {...props} />,
     thead: (props: HTMLAttributes<HTMLTableSectionElement>) => <thead {...props} />,
     tbody: (props: HTMLAttributes<HTMLTableSectionElement>) => <tbody {...props} />,

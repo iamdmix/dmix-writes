@@ -22,3 +22,9 @@ export function imageDimensions(src: string | Blob | undefined): ImageDimensions
   if (!src || typeof src !== "string") return undefined;
   return dimensions[src];
 }
+
+export function imagePlaceholder(src: string | Blob | undefined): string | undefined {
+  if (!src || typeof src !== "string" || !dimensions[src]) return undefined;
+  const withoutExtension = src.replace(/\.(png|jpe?g|webp|avif|gif)$/i, "");
+  return withoutExtension.replace(/^\/blog\//, "/lqip/") + ".jpg";
+}
