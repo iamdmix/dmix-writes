@@ -10,7 +10,7 @@ export const author = {
   name: "Dharmik Shinde",
   alternateName: "dmix",
   url: siteUrl,
-  sameAs: ["https://dharmikshinde.tech", "https://github.com/iamdmix"],
+  sameAs: ["https://dharmikshinde.in", "https://github.com/iamdmix"],
 };
 
 function personRef() {

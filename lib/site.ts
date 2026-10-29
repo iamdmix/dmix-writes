@@ -1,4 +1,4 @@
-const productionSiteUrl = "https://blog.dharmikshinde.tech";
+const productionSiteUrl = "https://blog.dharmikshinde.in";
 
 export const siteUrl = (process.env.SITE_URL?.trim() || productionSiteUrl).replace(/\/+$/, "");
 

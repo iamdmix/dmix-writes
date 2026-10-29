@@ -57,5 +57,5 @@ npm run dev
 ```
 
 Set `SITE_URL` in your deployment environment to your canonical domain (defaults to
-`https://blog.dharmikshinde.tech`). It is used for canonical tags, RSS links, sitemap, metadata,
+`https://blog.dharmikshinde.in`). It is used for canonical tags, RSS links, sitemap, metadata,
 and `/llms.txt`.

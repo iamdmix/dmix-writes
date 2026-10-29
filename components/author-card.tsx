@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { author } from "@/lib/seo";
 
-const personalSite = "https://dharmikshinde.tech";
+const personalSite = "https://dharmikshinde.in";
 const githubProfile = "https://github.com/iamdmix";
 
 export function AuthorCard() {
@@ -23,7 +23,7 @@ export function AuthorCard() {
           github/iamdmix
         </a>
         <a href={personalSite} target="_blank" rel="noopener noreferrer">
-          dharmikshinde.tech
+          dharmikshinde.in
         </a>
       </p>
     </section>
