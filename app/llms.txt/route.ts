@@ -28,7 +28,7 @@ export function GET() {
     "",
     "## Feeds and metadata",
     "",
-    `- [RSS feed](${baseUrl}/feed.xml): full-text RSS with every published post`,
+    `- [RSS feed](${baseUrl}/feed.xml): RSS feed with summaries and links for every published post`,
     `- [Sitemap](${baseUrl}/sitemap.xml): XML sitemap of all posts and topic hubs`,
     "",
   ];

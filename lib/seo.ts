@@ -50,6 +50,15 @@ export function webSiteJsonLd() {
   };
 }
 
+export function blogRefJsonLd() {
+  return {
+    "@type": "Blog",
+    "@id": `${siteUrl}/#blog`,
+    name: siteName,
+    url: siteUrl,
+  };
+}
+
 export function blogJsonLd(postUrls: string[]) {
   return {
     "@context": "https://schema.org",

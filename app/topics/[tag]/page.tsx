@@ -31,6 +31,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: { canonical: path, types: { "application/rss+xml": "/feed.xml" } },
     openGraph: {
       type: "website",
+      siteName: siteName,
+      locale: "en_US",
       title: `${tag} articles | ${siteName}`,
       description,
       url: path,

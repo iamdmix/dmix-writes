@@ -14,7 +14,7 @@ export function PostList({ posts, topics = [], likeCounts = {} }: { posts: BlogP
           <article className="post-row" key={post.slug}>
             <div className="post-date metadata">{formatDate(post.date)}</div>
             <Link href={`/blog/${post.slug}${topicQuery}`}>
-              <h3 className="post-title">{post.title}</h3>
+              <h2 className="post-title">{post.title}</h2>
               <p className="post-summary">{post.summary}</p>
             </Link>
             <div className="tag-set">

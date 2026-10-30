@@ -13,8 +13,7 @@ import { StructuredData } from "@/components/structured-data";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { formatDate, Tag } from "@/components/post-list";
 import { getAllPosts, getPost, getRelatedPosts } from "@/lib/posts";
-import { breadcrumbJsonLd, postJsonLd } from "@/lib/seo";
-import { siteName } from "@/lib/seo";
+import { author, blogRefJsonLd, breadcrumbJsonLd, personJsonLd, postJsonLd, siteName } from "@/lib/seo";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -43,6 +42,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     openGraph: {
       type: "article",
+      siteName: siteName,
+      locale: "en_US",
       title: post.title,
       description: post.summary,
       url: path,
@@ -88,21 +89,26 @@ export default async function PostPage({ params, searchParams }: Props) {
     td: (props: TdHTMLAttributes<HTMLTableCellElement>) => <td {...props} />,
   };
 
-  const structuredData = [
-    postJsonLd({
-      slug: post.slug,
-      title: post.title,
-      summary: post.summary,
-      date: post.date,
-      updated: post.updated,
-      tags: post.tags,
-      wordCount: words,
-    }),
-    breadcrumbJsonLd([
-      { name: siteName, path: "/" },
-      { name: post.title, path: `/blog/${post.slug}` },
-    ]),
-  ];
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      personJsonLd(),
+      blogRefJsonLd(),
+      postJsonLd({
+        slug: post.slug,
+        title: post.title,
+        summary: post.summary,
+        date: post.date,
+        updated: post.updated,
+        tags: post.tags,
+        wordCount: words,
+      }),
+      breadcrumbJsonLd([
+        { name: siteName, path: "/" },
+        { name: post.title, path: `/blog/${post.slug}` },
+      ]),
+    ],
+  };
 
   return (
     <>
@@ -124,7 +130,7 @@ export default async function PostPage({ params, searchParams }: Props) {
           <h1>{post.title}</h1>
           <p className="article-summary">{post.summary}</p>
           <div className="article-meta metadata">
-            {formatDate(post.date)} · {readingTime(post.content)} min read
+            By {author.name} · {formatDate(post.date)} · {readingTime(post.content)} min read
           </div>
         </header>
         <article className="prose">
